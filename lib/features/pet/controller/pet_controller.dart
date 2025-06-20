@@ -13,9 +13,9 @@ class PetController extends ReactiveController {
   PetController() : _handler = PetHandler(PetRepository());
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    fetchPets();
+    await fetchPets();
     filterPetList.value = pets;
   }
 
@@ -30,13 +30,10 @@ class PetController extends ReactiveController {
         final result = await _handler.getPetList();
         pets.value = result;
 
-        // Save to Hive
         for (final pet in result) {
           box.put(pet.id, pet);
         }
       }
-    } catch (e) {
-      // error handling
     } finally {
       isLoading.value = false;
     }

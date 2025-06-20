@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends ReactiveState<HomeScreen, PetController> {
   TextEditingController searchTEC = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,23 +83,30 @@ class _HomeScreenState extends ReactiveState<HomeScreen, PetController> {
                             );
                           }
 
-                          return RefreshIndicator(
-                            onRefresh: () async => controller.fetchPets(),
-                            child: ListView.builder(
-                              padding: EdgeInsets.zero,
-                              itemCount: controller.filterPetList.length,
-                              itemBuilder: (context, index) {
-                                final pet = controller.filterPetList[index];
-                                return PetCardTile(
-                                  pet: pet,
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => DetailsScreen(pet: pet)),
-                                  ),
-                                  onFavoriteToggle: () => controller.toggleFavorite(pet),
-                                );
-                              },
-                            ),
+                          return Observer(
+                            listenable: controller.pets,
+                            listener: (pet) {
+                              return RefreshIndicator(
+                                onRefresh: () async => controller.fetchPets(),
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  itemCount: controller.filterPetList.length,
+                                  itemBuilder: (context, index) {
+                                    final pet = controller.filterPetList[index];
+                                    return PetCardTile(
+                                      pet: pet,
+                                      icon: pet.isFavorited ? Icons.favorite : Icons.favorite_border,
+                                      iconColor: pet.isFavorited ? Colors.redAccent : Colors.grey,
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => DetailsScreen(pet: pet)),
+                                      ),
+                                      onFavoriteToggle: () => controller.toggleFavorite(pet),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
                           );
                         },
                       );

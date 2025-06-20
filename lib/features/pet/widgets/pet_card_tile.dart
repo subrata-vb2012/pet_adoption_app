@@ -5,8 +5,17 @@ class PetCardTile extends StatelessWidget {
   final Pet pet;
   final VoidCallback onTap;
   final VoidCallback onFavoriteToggle;
+  final IconData icon;
+  final Color iconColor;
 
-  const PetCardTile({super.key, required this.pet, required this.onTap, required this.onFavoriteToggle});
+  const PetCardTile({
+    super.key,
+    required this.pet,
+    required this.onTap,
+    required this.onFavoriteToggle,
+    required this.icon,
+    required this.iconColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,7 @@ class PetCardTile extends StatelessWidget {
                       "https://www.shutterstock.com/image-vector/illustration-cute-baby-golden-retrieve-600nw-2488093199.jpg",
                       width: 60,
                       height: 60,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     );
                   },
                 ),
@@ -52,7 +61,6 @@ class PetCardTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
-                        // Allow name to wrap if too long
                         child: Text(
                           pet.name,
                           style: Theme.of(
@@ -62,21 +70,31 @@ class PetCardTile extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(
-                          pet.isFavorited ? Icons.favorite : Icons.favorite_border,
-                          color: pet.isFavorited ? Colors.redAccent : Colors.grey,
-                        ),
+                        icon: Icon(icon, color: iconColor),
                         onPressed: onFavoriteToggle,
                         visualDensity: VisualDensity.compact,
                       ),
                     ],
                   ),
                   const SizedBox(height: 4.0),
-                  Text(
-                    'Age: ${pet.age} years}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Age: ${pet.age} years}',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        pet.isAdopted ? 'Adopted' : 'Available',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: pet.isAdopted ? Colors.grey : Colors.green,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8.0),
                   Text(

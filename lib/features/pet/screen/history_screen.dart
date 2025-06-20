@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pet_adoption_app/features/pet/screen/main_navigation_screen.dart';
 import 'package:reactiv/reactiv.dart';
 import '../../../models/pet_model.dart';
 import '../controller/pet_controller.dart';
@@ -15,14 +16,49 @@ class _HistoryScreenState extends ReactiveState<HistoryScreen, PetController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Adoption History")),
+      appBar: AppBar(title: const Text("Adoption History"), centerTitle: true, elevation: 2.0),
       body: Observer(
         listenable: controller.pets,
         listener: (pets) {
           final adoptedPets = pets.where((p) => p.isAdopted).toList().reversed.toList(); // most recent first
 
           if (adoptedPets.isEmpty) {
-            return const Center(child: Text("No pets adopted yet 🐾"));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.home_work_outlined, size: 80, color: Colors.grey[400]), // Example Icon
+                    // Or use an Image.asset('assets/images/empty_history.png') if you have one
+                    const SizedBox(height: 20),
+                    Text(
+                      "Your Adoption Journey is Yet to Begin!",
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.grey[700]),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Adopt a pet to see them here. 🐾",
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.pets_outlined),
+                      label: const Text("Click here to Adopt"),
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>MainNavigationScreen()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        textStyle: const TextStyle(fontSize: 15),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
           }
 
           return ListView.builder(
