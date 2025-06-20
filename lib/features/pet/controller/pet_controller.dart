@@ -7,7 +7,7 @@ import '../repository/pet_repository.dart';
 class PetController extends ReactiveController {
   final ReactiveList<Pet> pets = ReactiveList<Pet>([]);
   final ReactiveBool isLoading = ReactiveBool(true);
-
+  final ReactiveList<Pet> filterPetList = ReactiveList([]);
   final PetHandler _handler;
 
   PetController() : _handler = PetHandler(PetRepository());
@@ -16,6 +16,7 @@ class PetController extends ReactiveController {
   void onInit() {
     super.onInit();
     fetchPets();
+    filterPetList.value = pets;
   }
 
   Future<void> fetchPets() async {

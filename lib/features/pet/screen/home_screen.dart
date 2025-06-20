@@ -1,8 +1,5 @@
-// features/pet/screen/home_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:reactiv/reactiv.dart';
-import '../../../models/pet_model.dart';
 import '../controller/pet_controller.dart';
 import '../widgets/pet_card_tile.dart';
 import 'details_screen.dart';
@@ -15,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends ReactiveState<HomeScreen, PetController> {
-  final ReactiveString searchText = ReactiveString('');
+  TextEditingController searchTEC = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +23,27 @@ class _HomeScreenState extends ReactiveState<HomeScreen, PetController> {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: TextField(
+              controller: searchTEC,
               decoration: InputDecoration(
                 hintText: 'Search by pet name...',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.grey[200],
+                // Softer fill color
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0), // More rounded
+                  borderSide: BorderSide.none, // No visible border, rely on fill
+                ),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                contentPadding: const EdgeInsets.symmetric(vertical: 14.0), // Adjust padding
               ),
-              onChanged: (val) => searchText.value = val,
+              onChanged: (val) {
+                controller.filterPetList.value = controller.pets
+                    .where((pets) => pets.name.toLowerCase().contains(val.toLowerCase()))
+                    .toList();
+              },
+              onTapUpOutside: (f) {
+                FocusScope.of(context).unfocus();
+              },
             ),
           ),
           Expanded(
@@ -41,19 +53,42 @@ class _HomeScreenState extends ReactiveState<HomeScreen, PetController> {
                 return isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : Observer(
-                        listenable: controller.pets,
-                        listener: (pets) {
-                          final filteredPets = pets
-                              .where((pet) => pet.name.toLowerCase().contains(searchText.value.toLowerCase()))
-                              .toList();
+                        listenable: controller.filterPetList,
+                        listener: (filterPets) {
+                          if (filterPets.isEmpty) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.search_off_outlined, size: 60, color: Colors.grey[400]),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    searchTEC.text.isEmpty
+                                        ? 'No pets available right now.'
+                                        : 'No pets found for "${searchTEC.text}"',
+                                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  if (searchTEC.text.isNotEmpty)
+                                    TextButton(
+                                      onPressed: () {
+                                        searchTEC.clear();
+                                        controller.filterPetList.value = controller.pets;
+                                      }, // Clear search
+                                      child: const Text('Clear Search'),
+                                    ),
+                                ],
+                              ),
+                            );
+                          }
 
                           return RefreshIndicator(
                             onRefresh: () async => controller.fetchPets(),
                             child: ListView.builder(
                               padding: EdgeInsets.zero,
-                              itemCount: filteredPets.length,
+                              itemCount: controller.filterPetList.length,
                               itemBuilder: (context, index) {
-                                final pet = controller.pets[index];
+                                final pet = controller.filterPetList[index];
                                 return PetCardTile(
                                   pet: pet,
                                   onTap: () => Navigator.push(

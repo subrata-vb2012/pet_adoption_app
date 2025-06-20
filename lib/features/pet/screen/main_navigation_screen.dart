@@ -1,8 +1,5 @@
-// features/pet/screen/main_navigation_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:reactiv/reactiv.dart';
-
 import '../controller/pet_controller.dart';
 import 'home_screen.dart';
 import 'favorites_screen.dart';
@@ -23,32 +20,19 @@ class _MainNavigationScreenState extends ReactiveState<MainNavigationScreen, Pet
 
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    FavoritesScreen(),
-    HistoryScreen(),
-  ];
+  final List<Widget> _screens = const [HomeScreen(), FavoritesScreen(), HistoryScreen()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: AnimatedSwitcher(duration: const Duration(milliseconds: 800), child: _screens[_currentIndex]),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pets),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
         ],
       ),
     );

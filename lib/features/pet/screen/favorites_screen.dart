@@ -11,7 +11,6 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends ReactiveState<FavoritesScreen, PetController> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +40,13 @@ class _FavoritesScreenState extends ReactiveState<FavoritesScreen, PetController
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
+                        errorBuilder: (ctx, error, stack) {
+                          return Image.network(
+                            "https://www.shutterstock.com/image-vector/illustration-cute-baby-golden-retrieve-600nw-2488093199.jpg",
+                            width: 60,
+                            height: 60,
+                          );
+                        },
                       ),
                     ),
                     title: Text(pet.name),
@@ -50,12 +56,7 @@ class _FavoritesScreenState extends ReactiveState<FavoritesScreen, PetController
                       color: pet.isAdopted ? Colors.grey : Colors.red,
                     ),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DetailsScreen(pet: pet),
-                        ),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => DetailsScreen(pet: pet)));
                     },
                   ),
                 ),

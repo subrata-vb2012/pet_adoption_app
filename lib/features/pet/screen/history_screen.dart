@@ -1,5 +1,3 @@
-// features/pet/screen/history_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:reactiv/reactiv.dart';
 import '../../../models/pet_model.dart';
@@ -57,6 +55,8 @@ class _HistoryScreenState extends ReactiveState<HistoryScreen, PetController> {
                             errorBuilder: (ctx, error, stack) {
                               return Image.network(
                                 "https://www.shutterstock.com/image-vector/illustration-cute-baby-golden-retrieve-600nw-2488093199.jpg",
+                                width: 60,
+                                height: 60,
                               );
                             },
                           ),
